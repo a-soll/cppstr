@@ -1,33 +1,58 @@
 #include <cppstr.h>
 #include <iostream>
 
-CppStr::CppStr(std::string str) {
-    this->str = str;
+cppstr::cppstr(const char *str) {
+    this->_internal = new std::string(str);
 }
 
-void CppStr::replace(std::string repl, std::string with) {
-    size_t beg = this->str.find(repl);
-    size_t end = beg + repl.length();
-    this->str = this->str.substr(0, beg) + with + this->str.substr(end, this->str.length());
+cppstr::cppstr(std::string str) {
+    this->_internal = new std::string(str);
 }
 
-void CppStr::replaceBetween(std::string start, std::string end, std::string with) {
-    size_t start_beg = this->str.find(start);
-    size_t start_end = start_beg + start.length();
-    size_t end_end = this->str.find(end, start_end);
-    this->str = this->str.substr(0, start_end) + with + this->str.substr(end_end, this->str.length());
+cppstr::cppstr() {
+    this->_internal = new std::string();
 }
 
-std::ostream& operator<<(std::ostream &s, const CppStr &cppstr) {
-    return s << cppstr.str;
+cppstr::~cppstr() {
+    delete this->_internal;
 }
 
-CppStr CppStr::operator+(std::string rhs) {
-    CppStr ret = *this;
-    ret.str += rhs;
+void cppstr::replace(const char *repl, const char *with) {
+    size_t beg = this->_internal->find(repl);
+    size_t end = beg + strlen(repl);
+    *this->_internal = this->_internal->substr(0, beg) + with + this->_internal->substr(end, this->_internal->length());
+}
+
+void cppstr::replaceBetween(const char *start, const char *end, const char *with) {
+    size_t start_beg = this->_internal->find(start);
+    size_t start_end = start_beg + strlen(start);
+    size_t end_end = this->_internal->find(end, start_end);
+    *this->_internal = this->_internal->substr(0, start_end) + with +
+                       this->_internal->substr(end_end, this->_internal->length());
+}
+
+size_t cppstr::length() {
+    return this->_internal->length();
+}
+
+std::ostream &operator<<(std::ostream &s, const cppstr &cppstr) {
+    return s << *cppstr._internal;
+}
+
+cppstr cppstr::operator+(const char *rhs) {
+    cppstr ret = *this;
+    *ret._internal += rhs;
     return ret;
 }
 
-void CppStr::operator+=(std::string rhs) {
-    this->str += rhs;
+void cppstr::operator+=(const char *rhs) {
+    *this->_internal += rhs;
+}
+
+void cppstr::operator=(const char *rhs) {
+    *this->_internal = rhs;
+}
+
+void cppstr::operator=(std::string str) {
+    *this->_internal = str;
 }
