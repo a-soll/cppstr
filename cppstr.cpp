@@ -22,12 +22,12 @@ std::ostream& operator<<(std::ostream &s, const CppStr &cppstr) {
     return s << cppstr.str;
 }
 
-CppStr operator+(CppStr &lhs, std::string rhs) {
-    CppStr ret = lhs;
+CppStr CppStr::operator+(std::string rhs) {
+    CppStr ret = *this;
     ret.str += rhs;
     return ret;
 }
 
-void operator+=(CppStr &lhs, std::string rhs) {
-    lhs.str += rhs;
+void CppStr::operator+=(std::string rhs) {
+    this->str += rhs;
 }
