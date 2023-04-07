@@ -3,6 +3,8 @@
 
 class CppStr {
     friend std::ostream &operator<<(std::ostream &s, const CppStr &cppstr);
+    friend CppStr operator+(CppStr &lhs, std::string rhs);
+    friend void operator+=(CppStr &lhs, std::string rhs);
   public:
     std::string str;
     CppStr(std::string str);

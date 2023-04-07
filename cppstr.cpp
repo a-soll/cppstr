@@ -21,3 +21,13 @@ void CppStr::replaceBetween(std::string start, std::string end, std::string with
 std::ostream& operator<<(std::ostream &s, const CppStr &cppstr) {
     return s << cppstr.str;
 }
+
+CppStr operator+(CppStr &lhs, std::string rhs) {
+    CppStr ret = lhs;
+    ret.str += rhs;
+    return ret;
+}
+
+void operator+=(CppStr &lhs, std::string rhs) {
+    lhs.str += rhs;
+}
