@@ -1,4 +1,5 @@
 #include <cppstr.h>
+#include <cstring>
 #include <iostream>
 
 cppstr::cppstr(const char *str) {
@@ -55,4 +56,12 @@ void cppstr::operator=(const char *rhs) {
 
 void cppstr::operator=(std::string str) {
     *this->_internal = str;
+}
+
+cppstr::operator std::string() {
+    return *this->_internal;
+}
+
+cppstr::operator std::string &() {
+    return *this->_internal;
 }

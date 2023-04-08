@@ -2,19 +2,9 @@
     "configurations": [
         {
             "name": "cppstr",
-            "macFrameworkPath": [
-                "/System/Library/Frameworks",
-                "/Library/Frameworks"
-            ],
             "includePath": [
-                "${default}",
                 "${workspaceRoot}"
-            ],
-            "browse": {
-                "path": [
-                    "${workspaceRoot}"
-                ]
-            }
+            ]
         }
     ],
     "version": 4

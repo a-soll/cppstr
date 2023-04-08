@@ -4,11 +4,13 @@
 class cppstr {
     friend std::ostream &operator<<(std::ostream &s, const cppstr &cppstr);
   public:
-    size_t length();
     void operator+=(const char *rhs);
     void operator=(const char *rhs);
     void operator=(std::string rhs);
     cppstr operator+(const char *rhs);
+    operator std::string();
+    operator std::string &();
+
     cppstr(const char *str);
     cppstr(std::string str);
     cppstr();
@@ -25,6 +27,7 @@ class cppstr {
      * replaceBetween("{", "}", "inserting") -> "X {inserting} X"
      */
     void replaceBetween(const char *start, const char *end, const char *with);
+    size_t length();
   private:
     std::string *_internal;
 };
