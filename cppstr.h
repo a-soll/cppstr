@@ -28,6 +28,8 @@ class cppstr {
      */
     void replaceBetween(const char *start, const char *end, const char *with);
     size_t length();
+    // return std::string representation to access std functions
+    std::string &toString();
   private:
     std::string *_internal;
 };

@@ -1,6 +1,5 @@
 #include <cppstr.h>
 #include <cstring>
-#include <iostream>
 
 cppstr::cppstr(const char *str) {
     this->_internal = new std::string(str);
@@ -20,6 +19,9 @@ cppstr::~cppstr() {
 
 void cppstr::replace(const char *repl, const char *with) {
     size_t beg = this->_internal->find(repl);
+    if (beg > this->length()) {
+        return;
+    }
     size_t end = beg + strlen(repl);
     *this->_internal = this->_internal->substr(0, beg) + with + this->_internal->substr(end, this->_internal->length());
 }
@@ -28,12 +30,19 @@ void cppstr::replaceBetween(const char *start, const char *end, const char *with
     size_t start_beg = this->_internal->find(start);
     size_t start_end = start_beg + strlen(start);
     size_t end_end = this->_internal->find(end, start_end);
+    if (start_beg > this->length() || end_end > this->length()) {
+        return;
+    }
     *this->_internal = this->_internal->substr(0, start_end) + with +
                        this->_internal->substr(end_end, this->_internal->length());
 }
 
 size_t cppstr::length() {
     return this->_internal->length();
+}
+
+std::string &cppstr::toString() {
+    return *this->_internal;
 }
 
 std::ostream &operator<<(std::ostream &s, const cppstr &cppstr) {
