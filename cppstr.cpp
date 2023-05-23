@@ -74,3 +74,8 @@ cppstr::operator std::string() {
 cppstr::operator std::string &() {
     return *this->_internal;
 }
+
+char &cppstr::operator[](int index) {
+    assert(index >= 0 && index < this->length());
+    return this->_internal[0][index];
+}

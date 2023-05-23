@@ -10,6 +10,7 @@ class cppstr {
     cppstr operator+(const char *rhs);
     operator std::string();
     operator std::string &();
+    char &operator[](int index);
 
     cppstr(const char *str);
     cppstr(std::string str);
