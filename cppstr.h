@@ -1,3 +1,6 @@
+#ifndef CPPSTR_H
+#define CPPSTR_H
+
 #include <iostream>
 #include <string>
 
@@ -35,3 +38,5 @@ class cppstr {
   private:
     std::string *_internal;
 };
+
+#endif /* CPPSTR_H */
