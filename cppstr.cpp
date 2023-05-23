@@ -59,6 +59,10 @@ void cppstr::operator+=(const char *rhs) {
     *this->_internal += rhs;
 }
 
+void cppstr::operator+=(char rhs) {
+    *this->_internal += rhs;
+}
+
 void cppstr::operator=(const char *rhs) {
     *this->_internal = rhs;
 }

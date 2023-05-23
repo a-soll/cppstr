@@ -5,6 +5,7 @@ class cppstr {
     friend std::ostream &operator<<(std::ostream &s, const cppstr &cppstr);
   public:
     void operator+=(const char *rhs);
+    void operator+=(char rhs);
     void operator=(const char *rhs);
     void operator=(std::string rhs);
     cppstr operator+(const char *rhs);
