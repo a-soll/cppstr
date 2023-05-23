@@ -80,6 +80,8 @@ cppstr::operator std::string &() {
 }
 
 char &cppstr::operator[](int index) {
-    assert(index >= 0 && index < this->length());
+    if (index < 0 && index >= this->length()) {
+        return this->_internal[0][this->length()];
+    }
     return this->_internal[0][index];
 }
