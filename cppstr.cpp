@@ -71,6 +71,10 @@ void cppstr::operator=(std::string str) {
     *this->_internal = str;
 }
 
+bool cppstr::operator==(const std::string &rhs) {
+    return *this->_internal == rhs;
+}
+
 cppstr::operator std::string() {
     return *this->_internal;
 }
