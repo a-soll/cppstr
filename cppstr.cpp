@@ -87,6 +87,10 @@ const bool cppstr::operator==(const cppstr &rhs) const {
     return *this->_internal == *rhs._internal;
 }
 
+bool cppstr::operator==(const char *rhs) const {
+    return *this->_internal == rhs;
+}
+
 cppstr::operator std::string() {
     return *this->_internal;
 }

@@ -15,6 +15,7 @@ class cppstr {
     const bool operator==(const std::string &rhs) const;
     bool operator==(const cppstr &rhs);
     const bool operator==(const cppstr &rhs) const;
+    bool operator==(const char *rhs) const;
     cppstr operator+(const char *rhs);
     operator std::string();
     operator std::string &();
