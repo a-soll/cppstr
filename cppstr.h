@@ -12,6 +12,9 @@ class cppstr {
     void operator=(const char *rhs);
     void operator=(std::string rhs);
     bool operator==(const std::string &rhs);
+    const bool operator==(const std::string &rhs) const;
+    bool operator==(const cppstr &rhs);
+    const bool operator==(const cppstr &rhs) const;
     cppstr operator+(const char *rhs);
     operator std::string();
     operator std::string &();
