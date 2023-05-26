@@ -37,11 +37,11 @@ void cppstr::replaceBetween(const char *start, const char *end, const char *with
                        this->_internal->substr(end_end, this->_internal->length());
 }
 
-size_t cppstr::length() {
+size_t cppstr::length() const {
     return this->_internal->length();
 }
 
-std::string &cppstr::toString() {
+std::string &cppstr::toString() const {
     return *this->_internal;
 }
 

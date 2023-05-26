@@ -37,9 +37,9 @@ class cppstr {
      * replaceBetween("{", "}", "inserting") -> "X {inserting} X"
      */
     void replaceBetween(const char *start, const char *end, const char *with);
-    size_t length();
+    size_t length() const;
     // return std::string representation to access std functions
-    std::string &toString();
+    std::string &toString() const;
   private:
     std::string *_internal;
 };
