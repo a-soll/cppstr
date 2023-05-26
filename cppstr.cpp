@@ -105,3 +105,10 @@ char &cppstr::operator[](int index) {
     }
     return this->_internal[0][index];
 }
+
+char &cppstr::operator[](int index) const {
+    if (index < 0 && index >= this->length()) {
+        return this->_internal[0][this->length()];
+    }
+    return this->_internal[0][index];
+}

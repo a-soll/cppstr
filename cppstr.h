@@ -20,6 +20,7 @@ class cppstr {
     operator std::string();
     operator std::string &();
     char &operator[](int index);
+    char &operator[](int index) const;
 
     cppstr(const char *str);
     cppstr(std::string str);
