@@ -9,20 +9,19 @@ class cppstr {
   public:
     void operator+=(const char *rhs);
     void operator+=(char rhs);
-    void operator=(const char *rhs);
-    void operator=(std::string rhs);
-    bool operator==(const std::string &rhs);
-    const bool operator==(const std::string &rhs) const;
-    bool operator==(const cppstr &rhs);
-    const bool operator==(const cppstr &rhs) const;
+    cppstr &operator=(const char *rhs);
+    cppstr &operator=(const std::string &rhs);
+    bool operator==(const std::string &rhs) const;
+    bool operator==(const cppstr &rhs) const;
     bool operator==(const char *rhs) const;
-    cppstr operator+(const char *rhs);
+    cppstr operator+(const char *rhs) const;
     operator std::string();
     operator std::string &();
     char &operator[](int index);
+    char &operator[](int index) const;
 
     cppstr(const char *str);
-    cppstr(std::string str);
+    cppstr(const std::string &str);
     cppstr();
     ~cppstr();
     /**
