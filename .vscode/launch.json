@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "name": "cppstr",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/a.out",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "preLaunchTask": "cppstr_build"
+        }
+    ],
+    "version": "2.0.0"
+}

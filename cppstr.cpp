@@ -5,7 +5,7 @@ cppstr::cppstr(const char *str) {
     this->_internal = new std::string(str);
 }
 
-cppstr::cppstr(std::string str) {
+cppstr::cppstr(const std::string &str) {
     this->_internal = new std::string(str);
 }
 
@@ -49,9 +49,10 @@ std::ostream &operator<<(std::ostream &s, const cppstr &cppstr) {
     return s << *cppstr._internal;
 }
 
-cppstr cppstr::operator+(const char *rhs) {
-    cppstr ret = *this;
-    *ret._internal += rhs;
+cppstr cppstr::operator+(const char *rhs) const {
+    cppstr ret;
+    ret._internal->append(*this->_internal);
+    ret._internal->append(rhs);
     return ret;
 }
 
@@ -63,27 +64,21 @@ void cppstr::operator+=(char rhs) {
     *this->_internal += rhs;
 }
 
-void cppstr::operator=(const char *rhs) {
+cppstr &cppstr::operator=(const char *rhs) {
     *this->_internal = rhs;
+    return *this;
 }
 
-void cppstr::operator=(std::string str) {
+cppstr &cppstr::operator=(const std::string &str) {
     *this->_internal = str;
+    return *this;
 }
 
-bool cppstr::operator==(const std::string &rhs) {
+bool cppstr::operator==(const std::string &rhs) const {
     return *this->_internal == rhs;
 }
 
-const bool cppstr::operator==(const std::string &rhs) const {
-    return *this->_internal == rhs;
-}
-
-bool cppstr::operator==(const cppstr &rhs) {
-    return *this->_internal == *rhs._internal;
-}
-
-const bool cppstr::operator==(const cppstr &rhs) const {
+bool cppstr::operator==(const cppstr &rhs) const {
     return *this->_internal == *rhs._internal;
 }
 
