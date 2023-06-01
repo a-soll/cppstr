@@ -39,6 +39,9 @@ class cppstr {
     size_t length() const;
     // return std::string representation to access std functions
     std::string &toString() const;
+    void append(const char *str);
+    void append(const std::string &str);
+    void append(const cppstr &str);
   private:
     std::string *_internal;
 };

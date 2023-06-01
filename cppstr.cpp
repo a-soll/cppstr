@@ -45,6 +45,18 @@ std::string &cppstr::toString() const {
     return *this->_internal;
 }
 
+void cppstr::append(const char *str) {
+    this->_internal->append(str);
+}
+
+void cppstr::append(const std::string &str) {
+    this->_internal->append(str);
+}
+
+void cppstr::append(const cppstr &str) {
+    this->_internal->append(*str._internal);
+}
+
 std::ostream &operator<<(std::ostream &s, const cppstr &cppstr) {
     return s << *cppstr._internal;
 }
