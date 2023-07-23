@@ -9,6 +9,7 @@ class cppstr {
   public:
     void operator+=(const char *rhs);
     void operator+=(char rhs);
+    void operator+=(const std::string &rhs);
     cppstr &operator=(const char *rhs);
     cppstr &operator=(const std::string &rhs);
     bool operator==(const std::string &rhs) const;

@@ -80,6 +80,10 @@ void cppstr::operator+=(char rhs) {
     *this->_internal += rhs;
 }
 
+void cppstr::operator+=(const std::string &rhs) {
+    *this->_internal += rhs;
+}
+
 cppstr &cppstr::operator=(const char *rhs) {
     *this->_internal = rhs;
     return *this;

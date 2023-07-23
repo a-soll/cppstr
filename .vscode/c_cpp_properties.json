@@ -3,8 +3,11 @@
         {
             "name": "cppstr",
             "includePath": [
+                "${default}",
                 "${workspaceRoot}"
-            ]
+            ],
+            "cppStandard": "c++20",
+            "compilerPath": "/usr/bin/clang++"
         }
     ],
     "version": 4
