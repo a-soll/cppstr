@@ -42,6 +42,7 @@ class cppstr {
     void append(const char *str);
     void append(const std::string &str);
     void append(const cppstr &str);
+    void append(const char c);
   private:
     std::string *_internal;
 };

@@ -22,14 +22,14 @@ void cppstr::replace(const char *repl, const char *with) {
     if (beg > this->length()) {
         return;
     }
-    size_t end = beg + strlen(repl);
+    size_t end       = beg + strlen(repl);
     *this->_internal = this->_internal->substr(0, beg) + with + this->_internal->substr(end, this->_internal->length());
 }
 
 void cppstr::replaceBetween(const char *start, const char *end, const char *with) {
     size_t start_beg = this->_internal->find(start);
     size_t start_end = start_beg + strlen(start);
-    size_t end_end = this->_internal->find(end, start_end);
+    size_t end_end   = this->_internal->find(end, start_end);
     if (start_beg > this->length() || end_end > this->length()) {
         return;
     }
@@ -55,6 +55,10 @@ void cppstr::append(const std::string &str) {
 
 void cppstr::append(const cppstr &str) {
     this->_internal->append(*str._internal);
+}
+
+void cppstr::append(const char c) {
+    this->_internal += c;
 }
 
 std::ostream &operator<<(std::ostream &s, const cppstr &cppstr) {
