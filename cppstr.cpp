@@ -94,6 +94,11 @@ cppstr &cppstr::operator=(const std::string &str) {
     return *this;
 }
 
+cppstr &cppstr::operator=(const cppstr &other) {
+    *this->_internal = *other._internal;
+    return *this;
+}
+
 bool cppstr::operator==(const std::string &rhs) const {
     return *this->_internal == rhs;
 }
