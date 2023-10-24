@@ -2,133 +2,154 @@
 #include <cstring>
 
 cppstr::cppstr(const char *str) {
-    this->_internal = new std::string(str);
+    size_t size     = std::strlen(str);
+    this->_internal = (char *)malloc(sizeof(char) * size);
+    std::strncpy(this->_internal, str, size);
+    this->_size                     = size;
+    this->_length                   = size;
+    this->_internal[this->length()] = '\0';
 }
 
-cppstr::cppstr(const std::string &str) {
-    this->_internal = new std::string(str);
+cppstr::cppstr(cppstr &str) {
+    this->_internal = (char *)malloc(str.size());
+    this->_size     = str.size();
+    this->_length   = str.length();
+    strncpy(this->_internal, str._internal, str.length());
+    this->_internal[this->length()] = '\0';
 }
 
-cppstr::cppstr() {
-    this->_internal = new std::string();
+cppstr::cppstr(cppstr &&str) {
+    *this = std::move(str);
+}
+
+cppstr &cppstr::operator=(cppstr &&str) {
+    this->_size     = std::move(str._size);
+    this->_length   = std::move(str._length);
+    this->_internal = std::move(str._internal);
+    return *this;
+}
+
+cppstr::cppstr(int size) {
+    this->_internal = (char *)malloc(sizeof(char) * size);
 }
 
 cppstr::~cppstr() {
-    delete this->_internal;
-}
-
-void cppstr::replace(const char *repl, const char *with) {
-    size_t beg = this->_internal->find(repl);
-    if (beg > this->length()) {
-        return;
-    }
-    size_t end       = beg + strlen(repl);
-    *this->_internal = this->_internal->substr(0, beg) + with + this->_internal->substr(end, this->_internal->length());
-}
-
-void cppstr::replaceBetween(const char *start, const char *end, const char *with) {
-    size_t start_beg = this->_internal->find(start);
-    size_t start_end = start_beg + strlen(start);
-    size_t end_end   = this->_internal->find(end, start_end);
-    if (start_beg > this->length() || end_end > this->length()) {
-        return;
-    }
-    *this->_internal = this->_internal->substr(0, start_end) + with +
-                       this->_internal->substr(end_end, this->_internal->length());
-}
-
-size_t cppstr::length() const {
-    return this->_internal->length();
-}
-
-std::string &cppstr::toString() const {
-    return *this->_internal;
-}
-
-void cppstr::append(const char *str) {
-    this->_internal->append(str);
-}
-
-void cppstr::append(const std::string &str) {
-    this->_internal->append(str);
-}
-
-void cppstr::append(const cppstr &str) {
-    this->_internal->append(*str._internal);
-}
-
-void cppstr::append(const char c) {
-    this->_internal += c;
+    free(this->_internal);
 }
 
 std::ostream &operator<<(std::ostream &s, const cppstr &cppstr) {
-    return s << *cppstr._internal;
+    return s << cppstr._internal;
 }
 
-cppstr cppstr::operator+(const char *rhs) const {
-    cppstr ret;
-    ret._internal->append(*this->_internal);
-    ret._internal->append(rhs);
-    return ret;
+size_t cppstr::size() const {
+    return this->_size;
 }
 
-void cppstr::operator+=(const char *rhs) {
-    *this->_internal += rhs;
+size_t cppstr::length() const {
+    return this->_length;
 }
 
-void cppstr::operator+=(char rhs) {
-    *this->_internal += rhs;
-}
-
-void cppstr::operator+=(const std::string &rhs) {
-    *this->_internal += rhs;
-}
-
-cppstr &cppstr::operator=(const char *rhs) {
-    *this->_internal = rhs;
-    return *this;
-}
-
-cppstr &cppstr::operator=(const std::string &str) {
-    *this->_internal = str;
-    return *this;
-}
-
-cppstr &cppstr::operator=(const cppstr &other) {
-    *this->_internal = *other._internal;
-    return *this;
-}
-
-bool cppstr::operator==(const std::string &rhs) const {
-    return *this->_internal == rhs;
-}
-
-bool cppstr::operator==(const cppstr &rhs) const {
-    return *this->_internal == *rhs._internal;
-}
-
-bool cppstr::operator==(const char *rhs) const {
-    return *this->_internal == rhs;
-}
-
-cppstr::operator std::string() {
-    return *this->_internal;
-}
-
-cppstr::operator std::string &() {
-    return *this->_internal;
-}
-
-char &cppstr::operator[](int index) {
-    if (index < 0 && index >= this->length()) {
-        return this->_internal[0][this->length()];
+void cppstr::resizeMaybe(size_t size) {
+    if (this->size() <= this->length() + size) {
+        this->_size     = this->length() + size;
+        this->_internal = (char *)std::realloc(this->_internal, this->size());
     }
-    return this->_internal[0][index];
 }
 
-char &cppstr::operator[](int index) const {
-    if (index < 0 && index >= this->length()) {
-        return this->_internal[0][this->length()];
+void cppstr::append(const cppstr &str) {
+    this->resizeMaybe(str.length());
+    int j = 0;
+    for (int i = this->length(); i < this->length() + str.length(); i++) {
+        this->_internal[i] = str[j];
+        j++;
     }
-    return this->_internal[0][index];
+    this->_length += str.length();
+    this->_internal[this->length()] = '\0';
+}
+
+cppstr cppstr::operator+(const char *c) {
+    size_t size = std::strlen(c);
+    cppstr tmp(*this);
+    tmp.resizeMaybe(size);
+    int j = 0;
+    int i = tmp.length();
+    for (; i < tmp.length() + size; i++) {
+        tmp._internal[i] = c[j];
+        j++;
+    }
+    tmp._length                 = i;
+    tmp._internal[tmp.length()] = '\0';
+    return tmp;
+}
+
+char &cppstr::operator[](int i) {
+    return this->_internal[i];
+}
+
+char &cppstr::operator[](int i) const {
+    return this->_internal[i];
+}
+
+void cppstr::appendAt(const char *str, int ind) {
+    size_t size = std::strlen(str);
+    char tmp[this->length() + size];
+    int end_length = this->length() + size;
+    this->resizeMaybe(size);
+    // copy everything from ind for later
+    std::strncpy(tmp, this->_internal + ind, this->length() - ind);
+    int i = ind;
+    for (int j = 0; j < size; j++) {
+        this->_internal[i] = str[j];
+        i++;
+    }
+    int j = 0;
+    // append rest of original string
+    for (; i < end_length; i++) {
+        this->_internal[i] = tmp[j];
+        j++;
+    }
+    this->_length                   = end_length;
+    this->_internal[this->length()] = '\0';
+}
+
+size_t cppstr::find(const cppstr &str, int offset) {
+    char *p = strstr(this->_internal + offset, str._internal);
+    if (p) {
+        return p - this->_internal;
+    }
+    return cppstr::npos;
+}
+
+static bool isWholeMatch(const cppstr &str) {
+    return true;
+}
+
+void cppstr::replaceBetween(const cppstr &str, const cppstr &from, const cppstr &to,
+                            bool whole_match) {
+    size_t from_ind;
+    size_t to_ind;
+    if ((from_ind = this->find(from)) == cppstr::npos) {
+        return;
+    }
+    if ((to_ind = this->find(to, from_ind + from.length())) == cppstr::npos) {
+        return;
+    }
+    cppstr tmp(this->c_str() + to_ind);
+    this->overWrite(str, from_ind + from.length());
+    this->append(tmp);
+}
+
+const char *cppstr::c_str() const {
+    return this->_internal;
+}
+
+void cppstr::overWrite(const cppstr &str, int ind) {
+    this->resizeMaybe(str.length());
+    int j = ind;
+    for (int i = 0; i < str.length(); i++) {
+        this->_internal[j] = str[i];
+        j++;
+    }
+    this->_length                   = str.length() + ind;
+    this->_internal[this->length()] = '\0';
 }

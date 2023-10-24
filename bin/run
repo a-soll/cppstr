@@ -1,0 +1,3 @@
+#!/bin/bash
+
+clang++ --std=c++17 cppstr.cpp test.cpp -I. && ./a.out

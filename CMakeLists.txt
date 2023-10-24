@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 set(CMAKE_C_COMPILER ${CMAKE_C_COMPILER})
 set(CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER})
 
