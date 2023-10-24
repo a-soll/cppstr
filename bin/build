@@ -1,0 +1,15 @@
+#!/bin/bash
+
+install_path="$1"
+
+mkdir -p build
+cd build
+cmake ..
+cmake --build .
+
+if [ -z "$install_path" ];
+then
+    cmake --install .
+else
+    cmake --install . --prefix=$install_path
+fi

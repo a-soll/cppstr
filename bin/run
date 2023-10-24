@@ -1,3 +1,6 @@
 #!/bin/bash
 
-clang++ --std=c++17 cppstr.cpp test.cpp -I. && ./a.out
+cd build
+make
+cd ..
+clang++ --std=c++17 test.cpp -rpath build -Lbuild -lcppstr && ./a.out

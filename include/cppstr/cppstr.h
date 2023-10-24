@@ -4,17 +4,17 @@
 #include <iostream>
 #include <string>
 
-class cppstr {
-    friend std::ostream &operator<<(std::ostream &s, const cppstr &cppstr);
+namespace cppstr {
+
+class string {
+    friend std::ostream &operator<<(std::ostream &s, const string &cppstr);
 
   public:
-    cppstr(const char *str);
-    cppstr(cppstr &str);
-    cppstr(int size = 50);
-    cppstr();
-    ~cppstr();
-    cppstr(cppstr &&str);
-    cppstr &operator=(cppstr &&str);
+    string(const char *str);
+    string(string &str);
+    string(int size = 50);
+    ~string();
+    string(string &&str);
     // allocated size
     size_t size() const;
     // number of chars
@@ -23,21 +23,24 @@ class cppstr {
      * returns index of first occurance of str
      * or cppstr::npos
      */
-    size_t find(const cppstr &str, int offset = 0);
-    void append(const cppstr &str);
+    size_t find(const string &str, int offset = 0);
+    void append(const string &str);
     const char *c_str() const;
     // append given str starting at given index
     void appendAt(const char *str, int ind);
+    // append given string after substr
+    void appendAfter(const string &str, const string &substr);
     // insert given string between substring from up to substring to
-    void replaceBetween(const cppstr &str, const cppstr &from, const cppstr &to,
+    void replaceBetween(const string &str, const string &from, const string &to,
                         bool whole_match = true);
     /**
      * writes the given string into the buffer starting at ind.
      * will realloc if string doesn't fit.
      * Inserts NULL term after writing.
      */
-    void overWrite(const cppstr &str, int ind);
-    cppstr operator+(const char *c);
+    void overWrite(const string &str, int ind);
+    string operator+(const char *c);
+    string &operator=(string &&str);
     char &operator[](int i);
     char &operator[](int i) const;
     const static size_t npos = -1;
@@ -50,5 +53,7 @@ class cppstr {
     size_t _length;
     void resizeMaybe(size_t size);
 };
+
+} // namespace cppstr
 
 #endif /* CPPSTR_H */
