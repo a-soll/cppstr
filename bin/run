@@ -3,4 +3,4 @@
 cd build
 make
 cd ..
-clang++ --std=c++17 test.cpp -rpath build -Lbuild -lcppstr && ./a.out
+clang++ --std=c++17 test.cpp -Iinclude/ -rpath build -Lbuild -lcppstr && ./a.out

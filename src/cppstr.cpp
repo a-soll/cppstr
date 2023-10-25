@@ -4,7 +4,6 @@
 namespace cppstr {
 
 string::string(const char *str) {
-    std::cout << str << std::endl;
     size_t size = std::strlen(str);
     this->_internal = (char *)malloc(sizeof(char) * size);
     std::strncpy(this->_internal, str, size);
@@ -164,6 +163,11 @@ void string::overWrite(const string &str, int ind) {
     }
     this->_length = str.length() + ind;
     this->_internal[this->length()] = '\0';
+}
+
+string_view string::getView(size_t start, size_t end) {
+    string_view v(this->_internal, start, end);
+    return v;
 }
 
 } // namespace cppstr

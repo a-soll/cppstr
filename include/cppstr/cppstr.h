@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <cppstr/stringview.h>
 
 namespace cppstr {
 
@@ -39,6 +40,7 @@ class string {
      * Inserts NULL term after writing.
      */
     void overWrite(const string &str, int ind);
+    string_view getView(size_t start, size_t end);
     string operator+(const char *c);
     string &operator=(string &&str);
     char &operator[](int i);
