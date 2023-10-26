@@ -11,10 +11,10 @@ class string_view {
     string_view(char *str, size_t start, size_t end);
     char &operator[](size_t pos);
     size_t length() const;
-    size_t start;
-    size_t end;
 
   private:
+    size_t start;
+    size_t end;
     char *str;
 };
 
