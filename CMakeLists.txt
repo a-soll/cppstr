@@ -29,5 +29,11 @@ target_sources(cppstr PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(cppstr PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 install(TARGETS cppstr LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/cppstr
+)
+
+install (
+    DIRECTORY
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/cppstr
+    DESTINATION
+    ${CMAKE_INSTALL_INCLUDEDIR}
 )
