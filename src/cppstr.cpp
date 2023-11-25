@@ -12,6 +12,14 @@ string::string(const char *str) {
     this->_internal[this->length()] = '\0';
 }
 
+string::string(const std::string &str) {
+    this->_size = str.length() + 1;
+    this->_length = this->_size - 1;
+    this->_internal = (char *)malloc(sizeof(char) * this->_size);
+    std::strncpy(this->_internal, str.c_str(), this->_size);
+    this->_internal[this->length()] = 0;
+}
+
 string::string(string &str) {
     this->_internal = (char *)malloc(str.size());
     this->_size = str.size();
@@ -61,8 +69,8 @@ size_t string::length() const {
 }
 
 void string::resizeMaybe(size_t size) {
-    if (this->size() <= this->length() + size) {
-        this->_size = this->length() + size;
+    if (this->size() <= this->length() + size + 1) {
+        this->_size = this->length() + size + 1;
         this->_internal = (char *)std::realloc(this->_internal, this->size());
     }
 }

@@ -12,6 +12,7 @@ class string {
 
   public:
     string(const char *str);
+    string(const std::string &str);
     string(string &str);
     string(int size = 50);
     ~string();

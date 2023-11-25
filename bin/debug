@@ -1,0 +1,7 @@
+#!/bin/bash
+mkdir -p debug
+cd debug
+cmake .. -DCMAKE_BUILD_TYPE=Debug
+make
+
+clang++ --std=c++17 -g ../test.cpp -rpath . -I../include -L. -lcppstr
