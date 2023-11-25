@@ -20,10 +20,6 @@ set_target_properties(cppstr PROPERTIES CXX_STANDARD 17)
 
 set_target_properties(cppstr PROPERTIES VERSION ${PROJECT_VERSION})
 
-set_target_properties(cppstr PROPERTIES PUBLIC_HEADER
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/cppstr/cppstr.h
-)
-
 target_sources(cppstr PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 target_include_directories(cppstr PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
