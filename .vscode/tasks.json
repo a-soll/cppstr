@@ -3,14 +3,8 @@
         {
             "type": "cppbuild",
             "label": "cppstr_build",
-            "command": "/usr/bin/clang++",
-            "args": [
-                "-fcolor-diagnostics",
-                "-fansi-escape-codes",
-                "-g",
-                "*.cpp",
-                "-I."
-            ],
+            "command": "bin/debug",
+            "args": [],
             "options": {
                 "cwd": "${workspaceRoot}"
             },

@@ -60,5 +60,9 @@
         "variant": "cpp",
         "vector": "cpp",
         "algorithm": "cpp"
-    }
+    },
+    "clangd.fallbackFlags": [
+        "-I${workspaceRoot}",
+        "-std=c++17"
+    ]
 }

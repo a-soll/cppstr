@@ -1,3 +1,6 @@
 a.out
 test.cpp
 build/
+.cache
+*.dSYM
+debug/
