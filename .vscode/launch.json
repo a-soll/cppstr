@@ -2,15 +2,11 @@
     "configurations": [
         {
             "name": "cppstr",
-            "type": "cppdbg",
+            "type": "lldb",
             "request": "launch",
             "program": "${workspaceRoot}/debug/a.out",
             "args": [],
-            "stopAtEntry": false,
             "cwd": "${workspaceRoot}/debug",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "lldb",
             "preLaunchTask": "cppstr_build"
         }
     ],

@@ -63,6 +63,7 @@
     },
     "clangd.fallbackFlags": [
         "-I${workspaceRoot}",
-        "-std=c++17"
+        "-std=c++17",
+        "-Wunused-variable"
     ]
 }

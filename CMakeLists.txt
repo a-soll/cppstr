@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 set(CMAKE_C_COMPILER ${CMAKE_C_COMPILER})
 set(CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER})
+add_compile_options("-Wall")
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
