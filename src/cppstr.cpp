@@ -1,46 +1,57 @@
-#include <cstring>
 #include <cppstr/cppstr.h>
+#include <cstring>
 
 namespace cppstr {
 
 string::string(const char *str) {
-    size_t size = std::strlen(str);
-    this->_internal = (char *)malloc(sizeof(char) * size);
-    std::strncpy(this->_internal, str, size);
-    this->_size = size;
-    this->_length = size;
+    size_t length   = std::strlen(str);
+    this->_size     = length + 1;
+    this->_internal = new char[this->_size];
+    std::strncpy(this->_internal, str, this->_size);
+    this->_length                   = length;
     this->_internal[this->length()] = '\0';
 }
 
+string::string() {
+    this->_internal = nullptr;
+    this->_size     = 0;
+    this->_length   = 0;
+}
+
 string::string(const std::string &str) {
-    this->_size = str.length() + 1;
-    this->_length = this->_size - 1;
-    this->_internal = (char *)malloc(sizeof(char) * this->_size);
+    this->_size     = str.length() + 1;
+    this->_length   = this->_size - 1;
+    this->_internal = new char[this->_size];
     std::strncpy(this->_internal, str.c_str(), this->_size);
     this->_internal[this->length()] = 0;
 }
 
-string::string(string &str) {
-    this->_internal = (char *)malloc(str.size());
-    this->_size = str.size();
-    this->_length = str.length();
+string::string(const string &str) {
+    this->_internal = new char[str.size()];
+    this->_size     = str.size();
+    this->_length   = str.length();
     strncpy(this->_internal, str._internal, str.length());
     this->_internal[this->length()] = '\0';
 }
 
-string::string(string &&str) {
-    *this = std::move(str);
+string::string(string &&str) noexcept
+    : _internal(std::move(str._internal)), _size(std::move(str._size)),
+      _length(std::move(str._length)) {
+    str._internal = nullptr;
 }
 
 string &string::operator=(string &&str) {
-    this->_size = std::move(str._size);
-    this->_length = std::move(str._length);
+    this->_size     = std::move(str._size);
+    this->_length   = std::move(str._length);
     this->_internal = std::move(str._internal);
+    str._internal   = nullptr;
     return *this;
 }
 
 string::string(int size) {
-    this->_internal = (char *)malloc(sizeof(char) * size);
+    this->_internal = new char[size];
+    this->_size     = size;
+    this->_length   = 0;
 }
 
 void string::appendAfter(const string &str, const string &substr) {
@@ -53,7 +64,9 @@ void string::appendAfter(const string &str, const string &substr) {
 }
 
 string::~string() {
-    free(this->_internal);
+    this->_size   = 0;
+    this->_length = 0;
+    delete this->_internal;
 }
 
 std::ostream &operator<<(std::ostream &s, const string &cppstr) {
@@ -69,10 +82,31 @@ size_t string::length() const {
 }
 
 void string::resizeMaybe(size_t size) {
-    if (this->size() <= this->length() + size + 1) {
+    if (this->size() < this->length() + size + 1) {
         this->_size = this->length() + size + 1;
-        this->_internal = (char *)std::realloc(this->_internal, this->size());
+        if (!this->_internal) {
+            this->_internal = new char[this->size()];
+        } else {
+            this->_internal = (char *)std::realloc(this->_internal, this->size());
+        }
     }
+}
+
+void string::erase() {
+    this->_internal[0] = 0;
+    this->_length      = 0;
+}
+
+void string::append(const char *str) {
+    size_t len = std::strlen(str);
+    int j      = 0;
+    this->resizeMaybe(len);
+    for (int i = this->length(); i < this->length() + len; i++) {
+        this->_internal[i] = str[j];
+        j++;
+    }
+    this->_length += len;
+    this->_internal[this->length()] = 0;
 }
 
 void string::append(const string &str) {
@@ -86,6 +120,16 @@ void string::append(const string &str) {
     this->_internal[this->length()] = '\0';
 }
 
+string &string::operator=(const char *rhs) {
+    size_t len    = std::strlen(rhs);
+    this->_length = 0;
+    this->resizeMaybe(len);
+    this->_append(rhs, 0, len);
+    this->_length        = len;
+    this->_internal[len] = 0;
+    return *this;
+}
+
 string string::operator+(const char *c) {
     size_t size = std::strlen(c);
     string tmp(*this);
@@ -96,9 +140,17 @@ string string::operator+(const char *c) {
         tmp._internal[i] = c[j];
         j++;
     }
-    tmp._length = i;
+    tmp._length                 = i;
     tmp._internal[tmp.length()] = '\0';
     return tmp;
+}
+
+void string::operator+=(const char *rhs) {
+    this->append(rhs);
+}
+
+string::operator const char *() const {
+    return this->_internal;
 }
 
 char &string::operator[](int i) {
@@ -127,7 +179,7 @@ void string::appendAt(const char *str, int ind) {
         this->_internal[i] = tmp[j];
         j++;
     }
-    this->_length = end_length;
+    this->_length                   = end_length;
     this->_internal[this->length()] = '\0';
 }
 
@@ -139,6 +191,7 @@ size_t string::find(const string &str, int offset) {
     return string::npos;
 }
 
+// TODO: implement this lul
 static bool isWholeMatch(const string &str) {
     return true;
 }
@@ -162,15 +215,22 @@ const char *string::c_str() const {
     return this->_internal;
 }
 
-void string::overWrite(const string &str, int ind) {
+void string::overWrite(const string &str, int offset) {
     this->resizeMaybe(str.length());
-    int j = ind;
+    int j = offset;
     for (int i = 0; i < str.length(); i++) {
         this->_internal[j] = str[i];
         j++;
     }
-    this->_length = str.length() + ind;
+    this->_length                   = str.length() + offset;
     this->_internal[this->length()] = '\0';
+}
+
+void string::_append(const char *s, int offset, size_t s_len) {
+    int diff      = this->length() - offset;
+    this->_length = this->length() - diff + s_len;
+    strncpy(this->_internal + offset, s, s_len);
+    this->_internal[this->length()] = 0;
 }
 
 string_view string::getView(size_t start, size_t end) {
