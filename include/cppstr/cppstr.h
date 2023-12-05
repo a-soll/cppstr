@@ -49,10 +49,17 @@ class string {
      * Inserts NULL term after writing.
      */
     void overWrite(const string &str, int offset);
+    /**
+     * writes str starting at offset.
+     * does not insert null term unless str exceeds length.
+     * returns string::npos if offset > length.
+     */
+    size_t write(const char *str, int offset = 0);
     string_view getView(size_t start, size_t end);
     string operator+(const char *c);
     string &operator=(string &&str);
     string &operator=(const char *rhs);
+    void operator=(const string &rhs);
     void operator+=(const char *rhs);
     operator const char *() const;
     char &operator[](int i);
@@ -67,11 +74,16 @@ class string {
     size_t _length;
     /**
      * pass just length of string to append.
-     * - this function accounts for null term.
-     * - this function reallocates to this->length + size + 1.
+     * - if size == 0, do nothing
+     * - accounts for null term.
+     * - will allocate if nullptr,
+     *   realloc if already allocated.
+     * - reallocates to this->length + size + 1.
      * - if reallocated, this function sets the new this->_size.
      */
     void resizeMaybe(size_t size);
+    // returns true if index < this->length
+    bool boundsOk(int ind);
     /**
      * append s, with already calculated size len, starting from offset.
      * assumes resizeMaybe already called.

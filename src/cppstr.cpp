@@ -4,12 +4,17 @@
 namespace cppstr {
 
 string::string(const char *str) {
-    size_t length   = std::strlen(str);
-    this->_size     = length + 1;
-    this->_internal = new char[this->_size];
-    std::strncpy(this->_internal, str, this->_size);
-    this->_length                   = length;
-    this->_internal[this->length()] = '\0';
+    size_t length = std::strlen(str);
+    this->_size   = 0;
+    this->_length = length;
+    if (length > 0) {
+        this->_size     = length + 1;
+        this->_internal = new char[this->size()];
+        std::strncpy(this->_internal, str, this->_size);
+        this->_internal[this->length()] = '\0';
+    } else {
+        this->_internal = nullptr;
+    }
 }
 
 string::string() {
@@ -20,7 +25,7 @@ string::string() {
 
 string::string(const std::string &str) {
     this->_size     = str.length() + 1;
-    this->_length   = this->_size - 1;
+    this->_length   = str.length();
     this->_internal = new char[this->_size];
     std::strncpy(this->_internal, str.c_str(), this->_size);
     this->_internal[this->length()] = 0;
@@ -67,6 +72,16 @@ string::~string() {
     this->_size   = 0;
     this->_length = 0;
     delete this->_internal;
+}
+
+void string::operator=(const string &rhs) {
+    if (rhs.length() == 0) {
+        return;
+    }
+    this->resizeMaybe(rhs.length());
+    this->_length = rhs.length();
+    std::strncpy(this->_internal, rhs.c_str(), rhs.length());
+    this->_internal[this->length()] = 0;
 }
 
 std::ostream &operator<<(std::ostream &s, const string &cppstr) {
@@ -209,6 +224,22 @@ void string::replaceBetween(const string &str, const string &from, const string 
     string tmp(this->c_str() + to_ind);
     this->overWrite(str, from_ind + from.length());
     this->append(tmp);
+}
+
+size_t string::write(const char *str, int offset) {
+    if (offset > this->length()) {
+        return string::npos;
+    }
+    size_t len     = std::strlen(str);
+    int diff       = this->length() - offset;
+    size_t new_len = this->length() - diff + len;
+    this->resizeMaybe(new_len);
+    std::strncpy(this->_internal + offset, str, len);
+    if (this->length() < new_len) {
+        this->_internal[new_len] = 0;
+    }
+    this->_length = new_len;
+    return 0;
 }
 
 const char *string::c_str() const {
