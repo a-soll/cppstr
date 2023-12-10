@@ -6,17 +6,22 @@
 
 namespace cppstr {
 
+/**
+ * used as param to allow passing either `const char*` or `string`.
+ * avoids needing to malloc and redundant strlen().
+ */
 class sparam {
     friend std::ostream &operator<<(std::ostream &s, const sparam &p);
 
   public:
     sparam(const char *str);
-    template <typename string> sparam(const string &str) {
-        this->_len      = str->length();
-        this->_internal = str->c_str();
+    template <typename T> sparam(const T *t) {
+        this->_len      = t->length();
+        this->_internal = t->c_str();
     }
     size_t length() const;
     char operator[](int i) const;
+    operator const char *() const;
 
   private:
     size_t _len;

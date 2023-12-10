@@ -3,8 +3,8 @@
 
 #include <cppstr/sparam.h>
 #include <cppstr/stringview.h>
-#include <string>
 #include <iostream>
+#include <string>
 
 namespace cppstr {
 
@@ -15,7 +15,7 @@ class string {
     string();
     string(const char *str);
     explicit string(const std::string &str);
-    string(const string &str);
+    explicit string(const string &str);
     // init with empty string but allocated size
     string(int size);
     ~string();
@@ -33,38 +33,37 @@ class string {
      * or cppstr::npos.
      * optional offset to start search from.
      */
-    size_t find(const string &str, int offset = 0);
-    void append(const string &str);
-    void append(const char *str);
+    size_t find(const sparam &str, int offset = 0);
+    void append(const sparam &str);
     const char *c_str() const;
     // insert given str starting at given index
-    void insert(const char *str, int at);
+    void insert(const sparam &str, int at);
     // insert given string after substr
-    void insertAfter(const string &str, const string &substr);
+    void insertAfter(const sparam &str, const sparam &substr);
     // insert given string between substring from up to substring to
-    void replaceBetween(const string &str, const string &from, const string &to,
+    void replaceBetween(const sparam &str, const sparam &from, const sparam &to,
                         bool whole_match = true);
     // replace substr
-    void replace(const string &substr, const string &with);
+    void replace(const sparam &substr, const sparam &with);
     /**
      * writes the given string into the buffer starting at offset.
      * will realloc if string doesn't fit.
      * Inserts NULL term after writing.
      */
-    void overWrite(const string &str, int offset);
+    void overwrite(const sparam &str, int offset);
     /**
      * writes str starting at offset.
      * does not insert null term unless str exceeds length.
      * returns string::npos if offset > length.
      */
-    size_t write(const char *str, int offset = 0);
+    size_t write(const sparam &str, int offset = 0);
     string_view getView(size_t start, size_t end);
-    string operator+(const char *c);
+    string operator+(const sparam &c);
     string &operator=(string &&str);
-    string &operator=(const char *rhs);
+    string &operator=(const sparam &rhs);
     void operator=(const string &rhs);
-    void operator+=(const char *rhs);
-    operator const char *() const;
+    void operator+=(const sparam &rhs);
+    explicit operator const char *() const;
     operator sparam();
     char &operator[](int i);
     char &operator[](int i) const;
@@ -92,7 +91,11 @@ class string {
      * append s, with already calculated size len, starting from offset.
      * assumes resizeMaybe already called.
      */
-    void _append(const char *s, int offset, size_t s_len);
+    void _append(const sparam &s, int offset);
+    /**
+     * overwrite without calling resize
+     */
+    void _overwrite(const sparam &s, int offset);
 };
 
 } // namespace cppstr

@@ -19,4 +19,8 @@ char sparam::operator[](int i) const {
     return this->_internal[i];
 }
 
+sparam::operator const char *() const {
+    return this->_internal;
+}
+
 } // namespace cppstr
