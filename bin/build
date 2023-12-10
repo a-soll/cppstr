@@ -1,15 +1,26 @@
 #!/bin/bash
 
-install_path="$1"
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo "-i [path]     Install to given path. Leave blank for /usr/local."
+    echo
+    echo "Run without args to build without installing"
+    exit 0
+fi
+
+
+install_path="$2"
+install=false
+prefix=false
 
 mkdir -p build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build .
 
-if [ -z "$install_path" ];
-then
-    cmake --install .
-else
-    cmake --install . --prefix=$install_path
+if [ "$1" = -i ]; then
+    if [ -z $install_path ]; then
+        cmake --install .
+    else
+        cmake --install . --prefix $install_path
+    fi
 fi
