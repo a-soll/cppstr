@@ -36,13 +36,15 @@ class string {
     void append(const string &str);
     void append(const char *str);
     const char *c_str() const;
-    // append given str starting at given index
-    void appendAt(const char *str, int ind);
-    // append given string after substr
-    void appendAfter(const string &str, const string &substr);
+    // insert given str starting at given index
+    void insert(const char *str, int at);
+    // insert given string after substr
+    void insertAfter(const string &str, const string &substr);
     // insert given string between substring from up to substring to
     void replaceBetween(const string &str, const string &from, const string &to,
                         bool whole_match = true);
+    // replace substr
+    void replace(const string &substr, const string &with);
     /**
      * writes the given string into the buffer starting at offset.
      * will realloc if string doesn't fit.

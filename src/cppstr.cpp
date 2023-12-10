@@ -59,13 +59,13 @@ string::string(int size) {
     this->_length   = 0;
 }
 
-void string::appendAfter(const string &str, const string &substr) {
+void string::insertAfter(const string &str, const string &substr) {
     size_t ind;
     if ((ind = this->find(substr)) == string::npos) {
         return;
     }
     ind += substr.length();
-    this->appendAt(str.c_str(), ind);
+    this->insert(str.c_str(), ind);
 }
 
 string::~string() {
@@ -176,14 +176,14 @@ char &string::operator[](int i) const {
     return this->_internal[i];
 }
 
-void string::appendAt(const char *str, int ind) {
+void string::insert(const char *str, int at) {
     size_t size = std::strlen(str);
     char tmp[this->length() + size];
     int end_length = this->length() + size;
     this->resizeMaybe(size);
     // copy everything from ind for later
-    std::strncpy(tmp, this->_internal + ind, this->length() - ind);
-    int i = ind;
+    std::strncpy(tmp, this->_internal + at, this->length() - at);
+    int i = at;
     for (int j = 0; j < size; j++) {
         this->_internal[i] = str[j];
         i++;
@@ -262,6 +262,28 @@ void string::_append(const char *s, int offset, size_t s_len) {
     this->_length = this->length() - diff + s_len;
     strncpy(this->_internal + offset, s, s_len);
     this->_internal[this->length()] = 0;
+}
+
+void string::_replaceGreater(const string &substr, const string &with, size_t ind) {
+    size_t new_len = (with.length() - substr.length()) + this->length();
+    char tmp[this->length() - ind];
+    strncpy(tmp, this->c_str() + ind, this->length() - ind);
+    this->resizeMaybe(with.length() - substr.length());
+}
+
+void string::replace(const string &substr, const string &with) {
+    size_t ind;
+    if ((ind = this->find(substr)) == string::npos) {
+        return;
+    }
+    string tmp = this->c_str() + (ind + substr.length());
+    if (with.length() > substr.length()) {
+        this->resizeMaybe(with.length() - substr.length());
+        this->overWrite(with, ind);
+    } else {
+        this->overWrite(with, ind);
+    }
+    this->append(tmp);
 }
 
 string_view string::getView(size_t start, size_t end) {
