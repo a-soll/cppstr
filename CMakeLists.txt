@@ -12,6 +12,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_library(cppstr
     ${CMAKE_CURRENT_SOURCE_DIR}/src/cppstr.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/sparam.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/stringview.cpp
 )
 

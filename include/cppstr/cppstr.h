@@ -1,9 +1,10 @@
 #ifndef CPPSTR_H
 #define CPPSTR_H
 
+#include <cppstr/sparam.h>
 #include <cppstr/stringview.h>
-#include <iostream>
 #include <string>
+#include <iostream>
 
 namespace cppstr {
 
@@ -13,7 +14,7 @@ class string {
   public:
     string();
     string(const char *str);
-    string(const std::string &str);
+    explicit string(const std::string &str);
     string(const string &str);
     // init with empty string but allocated size
     string(int size);
@@ -64,6 +65,7 @@ class string {
     void operator=(const string &rhs);
     void operator+=(const char *rhs);
     operator const char *() const;
+    operator sparam();
     char &operator[](int i);
     char &operator[](int i) const;
     const static size_t npos = -1;

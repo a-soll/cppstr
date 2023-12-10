@@ -2,6 +2,7 @@
 
 mkdir -p build
 cd build
+cmake ..
 make
 cd ..
 clang++ --std=c++17 test.cpp -rpath build -Iinclude -Lbuild -lcppstr && ./a.out

@@ -85,7 +85,7 @@ void string::operator=(const string &rhs) {
 }
 
 std::ostream &operator<<(std::ostream &s, const string &cppstr) {
-    return s << cppstr._internal;
+    return s << cppstr.c_str();
 }
 
 size_t string::size() const {
@@ -264,13 +264,6 @@ void string::_append(const char *s, int offset, size_t s_len) {
     this->_internal[this->length()] = 0;
 }
 
-void string::_replaceGreater(const string &substr, const string &with, size_t ind) {
-    size_t new_len = (with.length() - substr.length()) + this->length();
-    char tmp[this->length() - ind];
-    strncpy(tmp, this->c_str() + ind, this->length() - ind);
-    this->resizeMaybe(with.length() - substr.length());
-}
-
 void string::replace(const string &substr, const string &with) {
     size_t ind;
     if ((ind = this->find(substr)) == string::npos) {
@@ -289,6 +282,10 @@ void string::replace(const string &substr, const string &with) {
 string_view string::getView(size_t start, size_t end) {
     string_view v(this->_internal, start, end);
     return v;
+}
+
+string::operator sparam() {
+    return this;
 }
 
 } // namespace cppstr
