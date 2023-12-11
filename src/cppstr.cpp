@@ -74,6 +74,10 @@ string::~string() {
     delete this->_internal;
 }
 
+void string::operator=(const char *rhs) {
+    *this = sparam(rhs);
+}
+
 void string::operator=(const string &rhs) {
     if (rhs.length() == 0) {
         return;
@@ -123,14 +127,13 @@ void string::append(const sparam &str) {
     this->_internal[this->length()] = 0;
 }
 
-string &string::operator=(const sparam &rhs) {
+void string::operator=(const sparam &rhs) {
     size_t len    = rhs.length();
     this->_length = 0;
     this->resizeMaybe(len);
     this->_append(rhs, 0);
     this->_length        = len;
     this->_internal[len] = 0;
-    return *this;
 }
 
 string string::operator+(const sparam &c) {

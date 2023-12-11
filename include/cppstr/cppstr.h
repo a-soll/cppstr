@@ -60,7 +60,8 @@ class string {
     string_view getView(size_t start, size_t end);
     string operator+(const sparam &c);
     string &operator=(string &&str);
-    string &operator=(const sparam &rhs);
+    void operator=(const char *rhs);
+    void operator=(const sparam &rhs);
     void operator=(const string &rhs);
     void operator+=(const sparam &rhs);
     explicit operator const char *() const;
