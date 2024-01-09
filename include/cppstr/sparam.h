@@ -15,6 +15,7 @@ class sparam {
 
   public:
     sparam(const char *str);
+    // constructor for std::string or cppstr::string
     template <typename T> sparam(const T *t) {
         this->_len      = t->length();
         this->_internal = t->c_str();
