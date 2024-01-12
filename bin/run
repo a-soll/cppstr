@@ -1,8 +1,21 @@
 #!/bin/bash
 
-mkdir -p build
-cd build
-cmake ..
-make
-cd ..
-clang++ --std=c++17 test.cpp -rpath build -Iinclude -Lbuild -lcppstr && ./a.out
+build=false
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo "-r, --release     Run using the installed system path library (does not build)"
+    echo
+    echo "Run without args to build and run against freshly built library in build/"
+    exit 0
+fi
+
+if [ "$1" = "-r" ] || [ "$1" = "--release" ]; then
+    clang++ --std=c++17 test.cpp -rpath /usr/local/lib -I/usr/local/include -L/usr/local/lib -lcppstr && ./a.out
+else
+    mkdir -p build
+    cd build
+    cmake ..
+    make
+    cd ..
+    clang++ --std=c++17 test.cpp -rpath build -Iinclude -Lbuild -lcppstr && ./a.out
+fi
