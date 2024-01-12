@@ -82,7 +82,7 @@ void string::operator=(const string &rhs) {
     if (rhs.length() == 0) {
         return;
     }
-    this->resizeMaybe(rhs.length());
+    this->_resizeMaybe(rhs.length());
     this->_length = rhs.length();
     std::strncpy(this->_internal, rhs.c_str(), rhs.length());
     this->_internal[this->length()] = 0;
@@ -100,14 +100,14 @@ size_t string::length() const {
     return this->_length;
 }
 
-void string::resizeMaybe(size_t size) {
-    if (this->size() < this->length() + size + 1) {
-        this->_size = this->length() + size + 1;
-        if (!this->_internal) {
-            this->_internal = new char[this->size()];
-        } else {
-            this->_internal = (char *)std::realloc(this->_internal, this->size());
-        }
+void string::_resizeMaybe(size_t size) {
+    while (this->size() < this->length() + size + 1) {
+        this->_size *= 2;
+    }
+    if (!this->_internal) {
+        this->_internal = new char[this->size()];
+    } else {
+        this->_internal = (char *)std::realloc(this->_internal, this->size());
     }
 }
 
@@ -117,7 +117,7 @@ void string::erase() {
 }
 
 void string::append(const sparam &str) {
-    this->resizeMaybe(str.length());
+    this->_resizeMaybe(str.length());
     int j = 0;
     for (int i = this->length(); i < this->length() + str.length(); i++) {
         this->_internal[i] = str[j];
@@ -130,16 +130,16 @@ void string::append(const sparam &str) {
 void string::operator=(const sparam &rhs) {
     size_t len    = rhs.length();
     this->_length = 0;
-    this->resizeMaybe(len);
+    this->_resizeMaybe(len);
     this->_append(rhs, 0);
     this->_length        = len;
     this->_internal[len] = 0;
 }
 
-string string::operator+(const sparam &c) {
+string string::operator+(const sparam &c) const {
     size_t size = c.length();
     string tmp(*this);
-    tmp.resizeMaybe(size);
+    tmp._resizeMaybe(size);
     int j = 0;
     int i = tmp.length();
     for (; i < tmp.length() + size; i++) {
@@ -171,7 +171,7 @@ void string::insert(const sparam &str, int at) {
     size_t size = str.length();
     char tmp[this->length() + size];
     int end_length = this->length() + size;
-    this->resizeMaybe(size);
+    this->_resizeMaybe(size);
     // copy everything from ind for later
     std::strncpy(tmp, this->_internal + at, this->length() - at);
     int i = at;
@@ -189,7 +189,7 @@ void string::insert(const sparam &str, int at) {
     this->_internal[this->length()] = '\0';
 }
 
-size_t string::find(const sparam &str, int offset) {
+size_t string::find(const sparam &str, int offset) const {
     char *p = strstr(this->_internal + offset, str);
     if (p) {
         return p - this->_internal;
@@ -223,7 +223,7 @@ size_t string::write(const sparam &str, int offset) {
     }
     int diff       = this->length() - offset;
     size_t new_len = this->length() - diff + str.length();
-    this->resizeMaybe(new_len);
+    this->_resizeMaybe(new_len);
     std::strncpy(this->_internal + offset, str, str.length());
     if (this->length() < new_len) {
         this->_internal[new_len] = 0;
@@ -237,7 +237,7 @@ const char *string::c_str() const {
 }
 
 void string::overwrite(const sparam &str, int offset) {
-    this->resizeMaybe(str.length());
+    this->_resizeMaybe(str.length());
     this->_overwrite(str, offset);
 }
 
@@ -268,7 +268,7 @@ void string::replace(const sparam &substr, const sparam &with) {
     strncpy(tmp, this->c_str() + (ind + substr.length()), tmp_len);
     tmp[tmp_len] = 0;
     if (with.length() > substr.length()) {
-        this->resizeMaybe(with.length() - substr.length());
+        this->_resizeMaybe(with.length() - substr.length());
     }
     this->_overwrite(with, ind);
     this->append(tmp);
