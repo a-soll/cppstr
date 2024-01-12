@@ -13,11 +13,11 @@ class string {
 
   public:
     string();
+    string(const string &str);
     string(const char *str);
-    explicit string(const std::string &str);
-    explicit string(const string &str);
+    string(const std::string &str);
     // init with empty string but allocated size
-    string(int size);
+    explicit string(int size);
     ~string();
     string(string &&str) noexcept;
     // allocated size
@@ -35,6 +35,13 @@ class string {
      */
     size_t find(const sparam &str, int offset = 0) const;
     void append(const sparam &str);
+    /**
+     * insert NULL term at given `ind`.
+     * does not reduce allocated size.
+     * sets length to `ind`.
+     * no action taken if `ind` > length
+     */
+    void chop(int ind);
     const char *c_str() const;
     // insert given str starting at given index
     void insert(const sparam &str, int at);
@@ -65,10 +72,9 @@ class string {
     void operator=(const sparam &rhs);
     void operator=(const string &rhs);
     void operator+=(const sparam &rhs);
-    explicit operator const char *() const;
     operator sparam();
     char &operator[](int i);
-    char &operator[](int i) const;
+    char operator[](int i) const;
     const static size_t npos = -1;
 
   private:
@@ -86,6 +92,8 @@ class string {
      * - doubles `this->size` until given `size` fits
      */
     void _resizeMaybe(size_t size);
+    // resize to given size
+    void _resize(size_t size);
     // returns true if index < this->length
     bool _boundsOk(int ind);
     /**

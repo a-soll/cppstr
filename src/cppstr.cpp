@@ -82,7 +82,9 @@ void string::operator=(const string &rhs) {
     if (rhs.length() == 0) {
         return;
     }
-    this->_resizeMaybe(rhs.length());
+    if (this->size() < rhs.size()) {
+        this->_resize(rhs.size());
+    }
     this->_length = rhs.length();
     std::strncpy(this->_internal, rhs.c_str(), rhs.length());
     this->_internal[this->length()] = 0;
@@ -100,9 +102,21 @@ size_t string::length() const {
     return this->_length;
 }
 
+void string::_resize(size_t size) {
+    if (!this->_internal) {
+        this->_internal = new char[size];
+    } else {
+        this->_internal = (char *)std::realloc(this->_internal, size);
+    }
+    this->_size = size;
+}
+
 void string::_resizeMaybe(size_t size) {
     while (this->size() < this->length() + size + 1) {
         this->_size *= 2;
+        if (this->size() == 0) {
+            this->_size = this->length() + size + 1;
+        }
     }
     if (!this->_internal) {
         this->_internal = new char[this->size()];
@@ -155,19 +169,18 @@ void string::operator+=(const sparam &rhs) {
     this->append(rhs);
 }
 
-string::operator const char *() const {
-    return this->_internal;
-}
-
 char &string::operator[](int i) {
     return this->_internal[i];
 }
 
-char &string::operator[](int i) const {
+char string::operator[](int i) const {
     return this->_internal[i];
 }
 
 void string::insert(const sparam &str, int at) {
+    if (at == string::npos) {
+        return;
+    }
     size_t size = str.length();
     char tmp[this->length() + size];
     int end_length = this->length() + size;
@@ -200,6 +213,14 @@ size_t string::find(const sparam &str, int offset) const {
 // TODO: implement this lul
 static bool isWholeMatch(const string &str) {
     return true;
+}
+
+void string::chop(int ind) {
+    if (ind > this->length()) {
+        return;
+    }
+    this->_internal[ind] = 0;
+    this->_length        = ind - 1;
 }
 
 void string::replaceBetween(const sparam &str, const sparam &from, const sparam &to,
