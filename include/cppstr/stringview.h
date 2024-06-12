@@ -13,9 +13,9 @@ class string_view {
     size_t length() const;
 
   private:
-    size_t start;
-    size_t end;
-    char *str;
+    size_t _start;
+    size_t _end;
+    char *_internal;
 };
 
 } // namespace cppstr

@@ -76,8 +76,10 @@ class string {
     char &operator[](int i);
     char operator[](int i) const;
     const static size_t npos = -1;
+    const static size_t _sso_size = 22;
 
   private:
+    char _sso[string::_sso_size];
     char *_internal;
     // allocated size
     size_t _size;

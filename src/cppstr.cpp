@@ -1,42 +1,48 @@
+#include <chrono>
 #include <cppstr/cppstr.h>
 #include <cstring>
 
 namespace cppstr {
 
+using namespace std::chrono;
+
 string::string(const char *str) {
-    size_t length = std::strlen(str);
-    this->_size   = 0;
-    this->_length = length;
-    if (length > 0) {
-        this->_size     = length + 1;
-        this->_internal = new char[this->size()];
-        std::strncpy(this->_internal, str, this->_size);
-        this->_internal[this->length()] = '\0';
+    this->_length = std::strlen(str);
+    this->_size = this->_length;
+
+    if (this->_length > string::_sso_size) {
+        this->_internal = new char[this->_length + 1];
     } else {
-        this->_internal = nullptr;
+        this->_internal = this->_sso;
     }
+    std::memcpy(this->_internal, str, this->_length);
+    this->_internal[this->_length] = '\0';
 }
 
 string::string() {
+    this->_size = 0;
+    this->_length = 0;
     this->_internal = nullptr;
-    this->_size     = 0;
-    this->_length   = 0;
 }
 
 string::string(const std::string &str) {
-    this->_size     = str.length() + 1;
-    this->_length   = str.length();
+    this->_size = str.capacity();
+    this->_length = str.length();
     this->_internal = new char[this->_size];
     std::strncpy(this->_internal, str.c_str(), this->_size);
-    this->_internal[this->length()] = 0;
+    this->_internal[this->_length] = 0;
 }
 
 string::string(const string &str) {
-    this->_internal = new char[str.size()];
-    this->_size     = str.size();
-    this->_length   = str.length();
-    strncpy(this->_internal, str._internal, str.length());
-    this->_internal[this->length()] = 0;
+    int size = str._size;
+    if (str._length > string::_sso_size) {
+        this->_internal = new char[size];
+        strncpy(this->_internal, str._internal, str._length);
+    } else {
+        this->_internal = str._internal;
+    }
+    this->_size = size;
+    this->_length = str._length;
 }
 
 string::string(string &&str) noexcept
@@ -46,17 +52,17 @@ string::string(string &&str) noexcept
 }
 
 string &string::operator=(string &&str) {
-    this->_size     = std::move(str._size);
-    this->_length   = std::move(str._length);
+    this->_size = std::move(str._size);
+    this->_length = std::move(str._length);
     this->_internal = std::move(str._internal);
-    str._internal   = nullptr;
+    str._internal = nullptr;
     return *this;
 }
 
 string::string(int size) {
     this->_internal = new char[size];
-    this->_size     = size;
-    this->_length   = 0;
+    this->_size = size;
+    this->_length = 0;
 }
 
 void string::insertAfter(const sparam &str, const sparam &substr) {
@@ -69,9 +75,9 @@ void string::insertAfter(const sparam &str, const sparam &substr) {
 }
 
 string::~string() {
-    this->_size   = 0;
-    this->_length = 0;
-    delete this->_internal;
+    if (this->_internal != this->_sso) {
+        delete this->_internal;
+    }
 }
 
 void string::operator=(const char *rhs) {
@@ -87,7 +93,7 @@ void string::operator=(const string &rhs) {
     }
     this->_length = rhs.length();
     std::strncpy(this->_internal, rhs.c_str(), rhs.length());
-    this->_internal[this->length()] = 0;
+    this->_internal[this->_length] = 0;
 }
 
 std::ostream &operator<<(std::ostream &s, const string &cppstr) {
@@ -112,10 +118,10 @@ void string::_resize(size_t size) {
 }
 
 void string::_resizeMaybe(size_t size) {
-    while (this->size() < this->length() + size + 1) {
+    while (this->_size < this->_length + size + 1) {
         this->_size *= 2;
-        if (this->size() == 0) {
-            this->_size = this->length() + size + 1;
+        if (this->_size == 0) {
+            this->_size = this->_length + size + 1;
         }
     }
     if (!this->_internal) {
@@ -127,26 +133,26 @@ void string::_resizeMaybe(size_t size) {
 
 void string::erase() {
     this->_internal[0] = 0;
-    this->_length      = 0;
+    this->_length = 0;
 }
 
 void string::append(const sparam &str) {
     this->_resizeMaybe(str.length());
     int j = 0;
-    for (int i = this->length(); i < this->length() + str.length(); i++) {
+    for (int i = this->_length; i < this->_length + str.length(); i++) {
         this->_internal[i] = str[j];
         j++;
     }
     this->_length += str.length();
-    this->_internal[this->length()] = 0;
+    this->_internal[this->_length] = 0;
 }
 
 void string::operator=(const sparam &rhs) {
-    size_t len    = rhs.length();
+    size_t len = rhs.length();
     this->_length = 0;
     this->_resizeMaybe(len);
     this->_append(rhs, 0);
-    this->_length        = len;
+    this->_length = len;
     this->_internal[len] = 0;
 }
 
@@ -160,7 +166,7 @@ string string::operator+(const sparam &c) const {
         tmp._internal[i] = c[j];
         j++;
     }
-    tmp._length                 = i;
+    tmp._length = i;
     tmp._internal[tmp.length()] = '\0';
     return tmp;
 }
@@ -182,11 +188,11 @@ void string::insert(const sparam &str, int at) {
         return;
     }
     size_t size = str.length();
-    char tmp[this->length() + size];
-    int end_length = this->length() + size;
+    char tmp[this->_length + size];
+    int end_length = this->_length + size;
     this->_resizeMaybe(size);
     // copy everything from ind for later
-    std::strncpy(tmp, this->_internal + at, this->length() - at);
+    std::strncpy(tmp, this->_internal + at, this->_length - at);
     int i = at;
     for (int j = 0; j < size; j++) {
         this->_internal[i] = str[j];
@@ -198,8 +204,8 @@ void string::insert(const sparam &str, int at) {
         this->_internal[i] = tmp[j];
         j++;
     }
-    this->_length                   = end_length;
-    this->_internal[this->length()] = '\0';
+    this->_length = end_length;
+    this->_internal[this->_length] = '\0';
 }
 
 size_t string::find(const sparam &str, int offset) const {
@@ -216,11 +222,11 @@ static bool isWholeMatch(const string &str) {
 }
 
 void string::chop(int ind) {
-    if (ind > this->length()) {
+    if (ind > this->_length) {
         return;
     }
     this->_internal[ind] = 0;
-    this->_length        = ind - 1;
+    this->_length = ind - 1;
 }
 
 void string::replaceBetween(const sparam &str, const sparam &from, const sparam &to,
@@ -239,14 +245,14 @@ void string::replaceBetween(const sparam &str, const sparam &from, const sparam 
 }
 
 size_t string::write(const sparam &str, int offset) {
-    if (offset > this->length()) {
+    if (offset > this->_length) {
         return string::npos;
     }
-    int diff       = this->length() - offset;
-    size_t new_len = this->length() - diff + str.length();
+    int diff = this->_length - offset;
+    size_t new_len = this->_length - diff + str.length();
     this->_resizeMaybe(new_len);
     std::strncpy(this->_internal + offset, str, str.length());
-    if (this->length() < new_len) {
+    if (this->_length < new_len) {
         this->_internal[new_len] = 0;
     }
     this->_length = new_len;
@@ -268,15 +274,15 @@ void string::_overwrite(const sparam &s, int offset) {
         this->_internal[j] = s[i];
         j++;
     }
-    this->_length                   = s.length() + offset;
-    this->_internal[this->length()] = '\0';
+    this->_length = s.length() + offset;
+    this->_internal[this->_length] = '\0';
 }
 
 void string::_append(const sparam &s, int offset) {
-    int diff      = this->length() - offset;
-    this->_length = this->length() - diff + s.length();
+    int diff = this->_length - offset;
+    this->_length = this->_length - diff + s.length();
     strncpy(this->_internal + offset, s, s.length());
-    this->_internal[this->length()] = 0;
+    this->_internal[this->_length] = 0;
 }
 
 void string::replace(const sparam &substr, const sparam &with) {
@@ -284,7 +290,7 @@ void string::replace(const sparam &substr, const sparam &with) {
     if ((ind = this->find(substr)) == string::npos) {
         return;
     }
-    size_t tmp_len = this->length() - (ind + substr.length());
+    size_t tmp_len = this->_length - (ind + substr.length());
     char tmp[tmp_len];
     strncpy(tmp, this->c_str() + (ind + substr.length()), tmp_len);
     tmp[tmp_len] = 0;
