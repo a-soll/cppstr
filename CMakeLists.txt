@@ -13,7 +13,8 @@ add_custom_command(
             install_manifest.txt to be uninstalled!
 )
 
-option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
+option(BUILD_SHARED_LIBS "Build using shared libraries")
+option(CPPSTR_BENCHMARKS "Build benchmark executables")
 
 project(cppstr VERSION 1.0)
 include(GNUInstallDirs)
@@ -37,18 +38,23 @@ set(src
 set(lib_dest ${CMAKE_INSTALL_LIBDIR})
 set(cppstr_install_cmakedir ${CMAKE_INSTALL_LIBDIR}/cmake/cppstr)
 
-add_library(cppstr ${header} ${src})
+add_library(cppstr_lib ${header} ${src})
 
-set_target_properties(cppstr PROPERTIES CXX_STANDARD 17)
-set_target_properties(cppstr PROPERTIES VERSION ${PROJECT_VERSION})
+if(CPPSTR_BENCHMARKS)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/benchmarks)
+endif()
+
+
+set_target_properties(cppstr_lib PROPERTIES CXX_STANDARD 17)
+set_target_properties(cppstr_lib PROPERTIES VERSION ${PROJECT_VERSION})
 
 # this allows EXPORT
-target_include_directories(cppstr PUBLIC
+target_include_directories(cppstr_lib PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>
     $<INSTALL_INTERFACE:include>  # <prefix>/include/mylib
 )
 
-install(TARGETS cppstr EXPORT cppstr DESTINATION ${lib_dest} INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(TARGETS cppstr_lib EXPORT cppstr DESTINATION ${lib_dest} INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(FILES ${header} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/cppstr)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cppstr-config.cmake DESTINATION ${cppstr_install_cmakedir})
 install(EXPORT cppstr DESTINATION ${cppstr_install_cmakedir})
