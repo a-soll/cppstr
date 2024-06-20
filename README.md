@@ -20,30 +20,30 @@ Current performance comparison to std::string, running each test 10 times and co
 
 ```
 ====== sso ======
-std avg:    16 ns
-cppstr avg: 25 ns
+std avg:    17 ns
+cppstr avg: 19 ns
 
 ====== non sso ======
-std avg:    33 ns
-cppstr avg: 29 ns
+std avg:    16 ns
+cppstr avg: 27 ns
 
 ====== append ======
-std avg:    41 ns
-cppstr avg: 54 ns
+std avg:    33 ns
+cppstr avg: 44 ns
 
 ====== consecutive appends ======
-std avg:    91 ns
-cppstr avg: 154 ns
+std avg:    184 ns
+cppstr avg: 101 ns
 
 ====== const ref ======
 std avg:    16 ns
-cppstr avg: 20 ns
+cppstr avg: 17 ns
 
 ====== copy ======
-std avg:    29 ns
-cppstr avg: 16 ns
+std avg:    16 ns
+cppstr avg: 19 ns
 ```
-std::string is very efficient with allocations. cppstr, at least so far, is extremely close in performance. 
+std::string is very efficient with allocations. cppstr, at least so far, is extremely close in performance.
 
 ### sparam
 All functions take an `sparam`, which is a temporary string type that avoids the need to malloc, copy, or re-calculate length. `sparam` should not be used directly as there
