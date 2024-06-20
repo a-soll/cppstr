@@ -7,12 +7,8 @@ std::ostream &operator<<(std::ostream &s, const sparam &p) {
 }
 
 sparam::sparam(const char *str) {
-    this->_len      = strlen(str);
+    this->_length = strlen(str);
     this->_internal = str;
-}
-
-size_t sparam::length() const {
-    return this->_len;
 }
 
 char sparam::operator[](int i) const {

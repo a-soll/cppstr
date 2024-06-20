@@ -17,7 +17,7 @@ class string {
     string(const char *str);
     string(const std::string &str);
     // init with empty string but allocated size
-    explicit string(int size);
+    explicit string(size_t size);
     ~string();
     string(string &&str) noexcept;
     // allocated size
@@ -42,7 +42,9 @@ class string {
      * no action taken if `ind` > length
      */
     void chop(int ind);
-    const char *c_str() const;
+    inline const char *c_str() const {
+        return this->_internal;
+    }
     // insert given str starting at given index
     void insert(const sparam &str, int at);
     // insert given string after substr
@@ -72,12 +74,15 @@ class string {
     void operator=(const sparam &rhs);
     void operator=(const string &rhs);
     void operator+=(const sparam &rhs);
+    bool operator==(const sparam &rhs) const;
     operator sparam();
     char &operator[](int i);
     char operator[](int i) const;
     const static size_t npos = -1;
 
   private:
+    const static size_t _sso_size = 22;
+    char _sso[string::_sso_size];
     char *_internal;
     // allocated size
     size_t _size;

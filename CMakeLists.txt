@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 set(CMAKE_C_COMPILER ${CMAKE_C_COMPILER})
 set(CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER})
-add_compile_options("-Wall")
+set (CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "-Wall")
 
 # make uninstall
 add_custom_target("uninstall" COMMENT "Uninstall installed files")
@@ -13,7 +14,8 @@ add_custom_command(
             install_manifest.txt to be uninstalled!
 )
 
-option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
+option(BUILD_SHARED_LIBS "Build using shared libraries")
+option(CPPSTR_BENCHMARKS "Build benchmark executables")
 
 project(cppstr VERSION 1.0)
 include(GNUInstallDirs)
@@ -38,6 +40,11 @@ set(lib_dest ${CMAKE_INSTALL_LIBDIR})
 set(cppstr_install_cmakedir ${CMAKE_INSTALL_LIBDIR}/cmake/cppstr)
 
 add_library(cppstr ${header} ${src})
+
+if(CPPSTR_BENCHMARKS)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/benchmarks)
+endif()
+
 
 set_target_properties(cppstr PROPERTIES CXX_STANDARD 17)
 set_target_properties(cppstr PROPERTIES VERSION ${PROJECT_VERSION})

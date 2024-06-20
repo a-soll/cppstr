@@ -14,7 +14,7 @@ if [ "$1" = "-r" ] || [ "$1" = "--release" ]; then
 else
     mkdir -p build
     cd build
-    cmake ..
+    cmake .. -DBUILD_SHARED_LIBS=OFF
     make
     cd ..
     clang++ --std=c++17 test.cpp -rpath build -Iinclude -Lbuild -lcppstr && ./a.out

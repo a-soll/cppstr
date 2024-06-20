@@ -11,6 +11,40 @@ It offers:
 - automatic memory management. Use it just like you would `std::string`.
 - useful functions for working with internal string contents.
 
+Current performance comparison to std::string, running each test 10 times and computing the average time to complete. Time is in nanoseconds. Tests right now include:
+1. Allocating a short string utilizing SSO
+2. Allocating a string that doesn't use SSO
+3. Appending contents to a short string which requires reallocation
+4. Passing each string type as const ref to a function
+5. Passing each string type by value to a function
+
+```
+====== sso ======
+std avg:    17 ns
+cppstr avg: 19 ns
+
+====== non sso ======
+std avg:    16 ns
+cppstr avg: 27 ns
+
+====== append ======
+std avg:    33 ns
+cppstr avg: 44 ns
+
+====== consecutive appends ======
+std avg:    184 ns
+cppstr avg: 101 ns
+
+====== const ref ======
+std avg:    16 ns
+cppstr avg: 17 ns
+
+====== copy ======
+std avg:    16 ns
+cppstr avg: 19 ns
+```
+std::string is very efficient with allocations. cppstr, at least so far, is extremely close in performance.
+
 ### sparam
 All functions take an `sparam`, which is a temporary string type that avoids the need to malloc, copy, or re-calculate length. `sparam` should not be used directly as there
 is no ownership of the data. It is only used to allow flexibility for the `cppstr::string` member functions. Simply pass a `const char*`,
@@ -26,6 +60,9 @@ cd build
 cmake ..
 make
 ```
+
+### Benchmarks
+To run the included benchmarks, build with `-DCPPSTR_BENCHMARKS=ON`. This will create an executable in `build/benchmarks/benchmarks`. This executable will run a series of operations on both cppstr and std::string and will compare the avg results of both for each operation.
 
 ### Using as Cmake dependency
 To use this library as a Cmake dependency, you can either use `find_package(CPPSTR)` or `FetchContent` like below.
