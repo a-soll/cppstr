@@ -17,15 +17,17 @@ class sparam {
     sparam(const char *str);
     // constructor for std::string or cppstr::string
     template <typename T> sparam(const T *t) {
-        this->_len      = t->length();
+        this->_length = t->length();
         this->_internal = t->c_str();
     }
-    size_t length() const;
+    inline size_t length() const {
+        return this->_length;
+    }
     char operator[](int i) const;
     operator const char *() const;
 
   private:
-    size_t _len;
+    size_t _length;
     const char *_internal;
 };
 

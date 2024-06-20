@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 set(CMAKE_C_COMPILER ${CMAKE_C_COMPILER})
 set(CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER})
+set (CMAKE_CXX_STANDARD 17)
 add_compile_options("-Wall")
 
 # make uninstall
@@ -38,23 +39,23 @@ set(src
 set(lib_dest ${CMAKE_INSTALL_LIBDIR})
 set(cppstr_install_cmakedir ${CMAKE_INSTALL_LIBDIR}/cmake/cppstr)
 
-add_library(cppstr_lib ${header} ${src})
+add_library(cppstr ${header} ${src})
 
 if(CPPSTR_BENCHMARKS)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/benchmarks)
 endif()
 
 
-set_target_properties(cppstr_lib PROPERTIES CXX_STANDARD 17)
-set_target_properties(cppstr_lib PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(cppstr PROPERTIES CXX_STANDARD 17)
+set_target_properties(cppstr PROPERTIES VERSION ${PROJECT_VERSION})
 
 # this allows EXPORT
-target_include_directories(cppstr_lib PUBLIC
+target_include_directories(cppstr PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>
     $<INSTALL_INTERFACE:include>  # <prefix>/include/mylib
 )
 
-install(TARGETS cppstr_lib EXPORT cppstr DESTINATION ${lib_dest} INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(TARGETS cppstr EXPORT cppstr DESTINATION ${lib_dest} INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(FILES ${header} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/cppstr)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cppstr-config.cmake DESTINATION ${cppstr_install_cmakedir})
 install(EXPORT cppstr DESTINATION ${cppstr_install_cmakedir})

@@ -29,20 +29,22 @@ string::string(const std::string &str) {
     this->_size = str.capacity();
     this->_length = str.length();
     this->_internal = new char[this->_size];
-    std::strncpy(this->_internal, str.c_str(), this->_size);
+    std::memcpy(this->_internal, str.c_str(), this->_size);
     this->_internal[this->_length] = 0;
 }
 
 string::string(const string &str) {
-    int size = str._size;
-    if (str._length > string::_sso_size) {
-        this->_internal = new char[size];
-        strncpy(this->_internal, str._internal, str._length);
-    } else {
-        this->_internal = str._internal;
-    }
-    this->_size = size;
+    this->_size = str._size;
     this->_length = str._length;
+    if (str._length > string::_sso_size) {
+        this->_internal = new char[this->_size];
+        std::memcpy(this->_internal, str._internal, str._length);
+        this->_internal[this->_length] = 0;
+    } else {
+        std::memcpy(this->_sso, str._sso, str._length);
+        this->_sso[this->_length] = 0;
+        this->_internal = this->_sso;
+    }
 }
 
 string::string(string &&str) noexcept
@@ -88,11 +90,11 @@ void string::operator=(const string &rhs) {
     if (rhs.length() == 0) {
         return;
     }
-    if (this->size() < rhs.size()) {
-        this->_resize(rhs.size());
+    if (this->size() < rhs._size) {
+        this->_resizeMaybe(rhs._size);
     }
     this->_length = rhs.length();
-    std::strncpy(this->_internal, rhs.c_str(), rhs.length());
+    std::memcpy(this->_internal, rhs.c_str(), rhs._length);
     this->_internal[this->_length] = 0;
 }
 
@@ -118,16 +120,22 @@ void string::_resize(size_t size) {
 }
 
 void string::_resizeMaybe(size_t size) {
+    bool resize = false;
     while (this->_size < this->_length + size + 1) {
         this->_size *= 2;
+        resize = true;
         if (this->_size == 0) {
             this->_size = this->_length + size + 1;
         }
     }
-    if (!this->_internal) {
-        this->_internal = new char[this->size()];
-    } else {
-        this->_internal = (char *)std::realloc(this->_internal, this->size());
+    if (resize) {
+        char *tmp = new char[this->_size];
+        std::memcpy(tmp, this->_internal, this->_length);
+        tmp[this->_length] = 0;
+        if (this->_internal != this->_sso) {
+            delete this->_internal;
+        }
+        this->_internal = tmp;
     }
 }
 
@@ -137,13 +145,10 @@ void string::erase() {
 }
 
 void string::append(const sparam &str) {
-    this->_resizeMaybe(str.length());
-    int j = 0;
-    for (int i = this->_length; i < this->_length + str.length(); i++) {
-        this->_internal[i] = str[j];
-        j++;
-    }
-    this->_length += str.length();
+    size_t str_len = str.length();
+    this->_resizeMaybe(str_len);
+    std::memcpy(this->_internal + this->_length, str, str_len);
+    this->_length += str_len;
     this->_internal[this->_length] = 0;
 }
 
@@ -175,6 +180,10 @@ void string::operator+=(const sparam &rhs) {
     this->append(rhs);
 }
 
+bool string::operator==(const sparam &rhs) const {
+    return strcmp(this->_internal, rhs) == 0;
+}
+
 char &string::operator[](int i) {
     return this->_internal[i];
 }
@@ -192,7 +201,7 @@ void string::insert(const sparam &str, int at) {
     int end_length = this->_length + size;
     this->_resizeMaybe(size);
     // copy everything from ind for later
-    std::strncpy(tmp, this->_internal + at, this->_length - at);
+    std::memcpy(tmp, this->_internal + at, this->_length - at);
     int i = at;
     for (int j = 0; j < size; j++) {
         this->_internal[i] = str[j];
@@ -251,16 +260,12 @@ size_t string::write(const sparam &str, int offset) {
     int diff = this->_length - offset;
     size_t new_len = this->_length - diff + str.length();
     this->_resizeMaybe(new_len);
-    std::strncpy(this->_internal + offset, str, str.length());
+    std::memcpy(this->_internal + offset, str, str.length());
     if (this->_length < new_len) {
         this->_internal[new_len] = 0;
     }
     this->_length = new_len;
     return 0;
-}
-
-const char *string::c_str() const {
-    return this->_internal;
 }
 
 void string::overwrite(const sparam &str, int offset) {
@@ -281,7 +286,7 @@ void string::_overwrite(const sparam &s, int offset) {
 void string::_append(const sparam &s, int offset) {
     int diff = this->_length - offset;
     this->_length = this->_length - diff + s.length();
-    strncpy(this->_internal + offset, s, s.length());
+    std::memcpy(this->_internal + offset, s, s.length());
     this->_internal[this->_length] = 0;
 }
 
@@ -292,7 +297,7 @@ void string::replace(const sparam &substr, const sparam &with) {
     }
     size_t tmp_len = this->_length - (ind + substr.length());
     char tmp[tmp_len];
-    strncpy(tmp, this->c_str() + (ind + substr.length()), tmp_len);
+    std::memcpy(tmp, this->c_str() + (ind + substr.length()), tmp_len);
     tmp[tmp_len] = 0;
     if (with.length() > substr.length()) {
         this->_resizeMaybe(with.length() - substr.length());
