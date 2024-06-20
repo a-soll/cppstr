@@ -115,25 +115,29 @@ static void consecutive_appends() {
                      "stringThis is more test stringThis is more test stringThis is more "
                      "test stringThis is more test string");
 
+    std::string std =
+        "This is more test stringThis is more test stringThis is more test "
+        "stringThis is more test stringThis is more test stringThis is more "
+        "test stringThis is more test string";
     for (int i = 0; i < num_tests; i++) {
-        std::string std = "This is a test string";
         auto start = high_resolution_clock::now();
         std.append("This is more test stringThis is more test stringThis is more test "
-                   "stringThis is more test stringThis is more test stringThis is more "
-                   "test stringThis is more test string");
-        std.append(std);
+                   "stringThis is more test stringThis is more test stringThis is "
+                   "moretest stringThis is more test string");
         auto stop = high_resolution_clock::now();
         auto duration = duration_cast<nanoseconds>(stop - start);
         std_results.push_back(duration.count());
     }
 
+    cppstr::string cpp =
+        "This is more test stringThis is more test stringThis is more test "
+        "stringThis is more test stringThis is more test stringThis is more "
+        "test stringThis is more test string";
     for (int i = 0; i < num_tests; i++) {
-        cppstr::string cpp = "This is a test string";
         auto start = high_resolution_clock::now();
         cpp.append("This is more test stringThis is more test stringThis is more test "
-                   "stringThis is more test stringThis is more test stringThis is more "
-                   "test stringThis is more test string");
-        cpp.append(cpp);
+                   "stringThis is more test stringThis is more test stringThis is "
+                   "moretest stringThis is more test string");
         auto stop = high_resolution_clock::now();
         auto duration = duration_cast<nanoseconds>(stop - start);
         cppstr_results.push_back(duration.count());

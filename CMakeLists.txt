@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 set(CMAKE_C_COMPILER ${CMAKE_C_COMPILER})
 set(CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER})
 set (CMAKE_CXX_STANDARD 17)
-add_compile_options("-Wall")
+set(CMAKE_CXX_FLAGS "-Wall")
 
 # make uninstall
 add_custom_target("uninstall" COMMENT "Uninstall installed files")

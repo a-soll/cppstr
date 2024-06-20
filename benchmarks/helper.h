@@ -6,7 +6,7 @@
 
 extern std::vector<long long> std_results;
 extern std::vector<long long> cppstr_results;
-constexpr int num_tests = 10;
+constexpr int num_tests = 9999999;
 
 void print_avg(const cppstr::string &test_name);
 void reset_results();

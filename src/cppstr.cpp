@@ -61,7 +61,7 @@ string &string::operator=(string &&str) {
     return *this;
 }
 
-string::string(int size) {
+string::string(size_t size) {
     this->_internal = new char[size];
     this->_size = size;
     this->_length = 0;
@@ -122,11 +122,12 @@ void string::_resize(size_t size) {
 void string::_resizeMaybe(size_t size) {
     bool resize = false;
     while (this->_size < this->_length + size + 1) {
-        this->_size *= 2;
-        resize = true;
         if (this->_size == 0) {
             this->_size = this->_length + size + 1;
+        } else {
+            this->_size *= 2;
         }
+        resize = true;
     }
     if (resize) {
         char *tmp = new char[this->_size];

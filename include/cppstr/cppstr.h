@@ -17,7 +17,7 @@ class string {
     string(const char *str);
     string(const std::string &str);
     // init with empty string but allocated size
-    explicit string(int size);
+    explicit string(size_t size);
     ~string();
     string(string &&str) noexcept;
     // allocated size
