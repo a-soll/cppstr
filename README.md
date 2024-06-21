@@ -11,7 +11,7 @@ It offers:
 - automatic memory management. Use it just like you would `std::string`.
 - useful functions for working with internal string contents.
 
-Current performance comparison to std::string, running each test 10 times and computing the average time to complete. Time is in nanoseconds. Tests right now include:
+Current performance comparison to std::string, running each test 9999999 times and computing the average time to complete. Time is in nanoseconds. Tests right now include:
 1. Allocating a short string utilizing SSO
 2. Allocating a string that doesn't use SSO
 3. Appending contents to a short string which requires reallocation
