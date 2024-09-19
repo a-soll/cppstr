@@ -7,18 +7,39 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     exit 0
 fi
 
+print_help() {
+    echo "-i [path]     Install to given path. Leave blank for /usr/local."
+    echo "-b            Build benchmarks"
+    echo "Run without args to build without installing"
+    exit 0
+}
 
-install_path="$2"
+install_path=""
 install=false
 prefix=false
+cmake_args="-DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF"
+
+while [ ! "$1" == "" ]; do
+    case "$1" in
+    "-b" )
+            cmake_args+=" -DCPPSTR_BENCHMARKS=ON"
+            ;;
+    "-i" )
+            shift
+            install_path="$1"
+            install=true
+            ;;
+    esac
+    shift
+done
 
 mkdir -p build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF
+cmake .. ${cmake_args}
 cmake --build .
 
-if [ "$1" = -i ]; then
-    if [ -z $install_path ]; then
+if [ -z "${install}" ]; then
+    if [ $install_path != "" ]; then
         sudo cmake --install .
     else
         sudo cmake --install . --prefix $install_path
