@@ -11,7 +11,7 @@ namespace cppstr {
 class string {
     friend std::ostream &operator<<(std::ostream &s, const string &cppstr);
 
-  public:
+public:
     string();
     string(const string &str);
     string(const char *str);
@@ -50,8 +50,12 @@ class string {
     // insert given string after substr
     void insertAfter(const sparam &str, const sparam &substr);
     // insert given string between substring `from` up to substring `to`
-    void replaceBetween(const sparam &str, const sparam &from, const sparam &to,
-                        bool whole_match = true);
+    void replaceBetween(
+        const sparam &str,
+        const sparam &from,
+        const sparam &to,
+        bool whole_match = true
+    );
     // replace substr
     void replace(const sparam &substr, const sparam &with);
     /**
@@ -75,12 +79,15 @@ class string {
     void operator=(const string &rhs);
     void operator+=(const sparam &rhs);
     bool operator==(const sparam &rhs) const;
+    inline operator std::string_view() {
+        return this->_internal;
+    }
     operator sparam();
     char &operator[](int i);
     char operator[](int i) const;
     const static size_t npos = -1;
 
-  private:
+private:
     const static size_t _sso_size = 22;
     char _sso[string::_sso_size];
     char *_internal;

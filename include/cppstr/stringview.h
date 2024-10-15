@@ -2,7 +2,6 @@
 #define STRINGVIEW_H
 
 #include <cstring>
-#include <stdexcept>
 
 namespace cppstr {
 

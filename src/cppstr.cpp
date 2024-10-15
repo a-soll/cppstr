@@ -1,4 +1,3 @@
-#include <chrono>
 #include <cppstr/cppstr.h>
 #include <cstring>
 
@@ -8,7 +7,7 @@ using namespace std::chrono;
 
 string::string(const char *str) {
     this->_length = std::strlen(str);
-    this->_size = this->_length;
+    this->_size   = this->_length;
 
     if (this->_length > string::_sso_size) {
         this->_internal = new char[this->_length + 1];
@@ -20,21 +19,21 @@ string::string(const char *str) {
 }
 
 string::string() {
-    this->_size = 0;
-    this->_length = 0;
+    this->_size     = 0;
+    this->_length   = 0;
     this->_internal = nullptr;
 }
 
 string::string(const std::string &str) {
-    this->_size = str.capacity();
-    this->_length = str.length();
+    this->_size     = str.capacity();
+    this->_length   = str.length();
     this->_internal = new char[this->_size];
     std::memcpy(this->_internal, str.c_str(), this->_size);
     this->_internal[this->_length] = 0;
 }
 
 string::string(const string &str) {
-    this->_size = str._size;
+    this->_size   = str._size;
     this->_length = str._length;
     if (str._length > string::_sso_size) {
         this->_internal = new char[this->_size];
@@ -43,28 +42,29 @@ string::string(const string &str) {
     } else {
         std::memcpy(this->_sso, str._sso, str._length);
         this->_sso[this->_length] = 0;
-        this->_internal = this->_sso;
+        this->_internal           = this->_sso;
     }
 }
 
 string::string(string &&str) noexcept
-    : _internal(std::move(str._internal)), _size(std::move(str._size)),
-      _length(std::move(str._length)) {
+    : _internal(std::move(str._internal))
+    , _size(std::move(str._size))
+    , _length(std::move(str._length)) {
     str._internal = nullptr;
 }
 
 string &string::operator=(string &&str) {
-    this->_size = std::move(str._size);
-    this->_length = std::move(str._length);
+    this->_size     = std::move(str._size);
+    this->_length   = std::move(str._length);
     this->_internal = std::move(str._internal);
-    str._internal = nullptr;
+    str._internal   = nullptr;
     return *this;
 }
 
 string::string(size_t size) {
     this->_internal = new char[size];
-    this->_size = size;
-    this->_length = 0;
+    this->_size     = size;
+    this->_length   = 0;
 }
 
 void string::insertAfter(const sparam &str, const sparam &substr) {
@@ -142,7 +142,7 @@ void string::_resizeMaybe(size_t size) {
 
 void string::erase() {
     this->_internal[0] = 0;
-    this->_length = 0;
+    this->_length      = 0;
 }
 
 void string::append(const sparam &str) {
@@ -154,11 +154,11 @@ void string::append(const sparam &str) {
 }
 
 void string::operator=(const sparam &rhs) {
-    size_t len = rhs.length();
+    size_t len    = rhs.length();
     this->_length = 0;
     this->_resizeMaybe(len);
     this->_append(rhs, 0);
-    this->_length = len;
+    this->_length        = len;
     this->_internal[len] = 0;
 }
 
@@ -172,7 +172,7 @@ string string::operator+(const sparam &c) const {
         tmp._internal[i] = c[j];
         j++;
     }
-    tmp._length = i;
+    tmp._length                 = i;
     tmp._internal[tmp.length()] = '\0';
     return tmp;
 }
@@ -214,7 +214,7 @@ void string::insert(const sparam &str, int at) {
         this->_internal[i] = tmp[j];
         j++;
     }
-    this->_length = end_length;
+    this->_length                  = end_length;
     this->_internal[this->_length] = '\0';
 }
 
@@ -226,21 +226,20 @@ size_t string::find(const sparam &str, int offset) const {
     return string::npos;
 }
 
-// TODO: implement this lul
-static bool isWholeMatch(const string &str) {
-    return true;
-}
-
 void string::chop(int ind) {
     if (ind > this->_length) {
         return;
     }
     this->_internal[ind] = 0;
-    this->_length = ind - 1;
+    this->_length        = ind - 1;
 }
 
-void string::replaceBetween(const sparam &str, const sparam &from, const sparam &to,
-                            bool whole_match) {
+void string::replaceBetween(
+    const sparam &str,
+    const sparam &from,
+    const sparam &to,
+    bool whole_match
+) {
     size_t from_ind;
     size_t to_ind;
     if ((from_ind = this->find(from)) == string::npos) {
@@ -258,7 +257,7 @@ size_t string::write(const sparam &str, int offset) {
     if (offset > this->_length) {
         return string::npos;
     }
-    int diff = this->_length - offset;
+    int diff       = this->_length - offset;
     size_t new_len = this->_length - diff + str.length();
     this->_resizeMaybe(new_len);
     std::memcpy(this->_internal + offset, str, str.length());
@@ -280,12 +279,12 @@ void string::_overwrite(const sparam &s, int offset) {
         this->_internal[j] = s[i];
         j++;
     }
-    this->_length = s.length() + offset;
+    this->_length                  = s.length() + offset;
     this->_internal[this->_length] = '\0';
 }
 
 void string::_append(const sparam &s, int offset) {
-    int diff = this->_length - offset;
+    int diff      = this->_length - offset;
     this->_length = this->_length - diff + s.length();
     std::memcpy(this->_internal + offset, s, s.length());
     this->_internal[this->_length] = 0;

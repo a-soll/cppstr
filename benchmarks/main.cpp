@@ -1,7 +1,7 @@
-#include "allocations.h"
-#include "parameter.h"
+#include "test_main.hpp"
+#include "test_object.h"
 
 int main() {
-    run_allocations();
-    run_parameter();
+    add_all_tests<cppstr::string, CppStrTest>();
+    add_all_tests<std::string, StdStrTest>();
 }
